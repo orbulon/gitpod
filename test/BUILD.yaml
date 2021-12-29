@@ -26,7 +26,7 @@ packages:
       - ["sh", "leeway-build.sh"]
     config:
       dontTest: true
-  - name: docker
+  - name: docker-integration-tests
     type: docker
     srcs:
       - entrypoint.sh
@@ -35,9 +35,24 @@ packages:
     argdeps:
       - imageRepoBase
     config:
-      dockerfile: leeway.Dockerfile
+      dockerfile: integration.Dockerfile
       metadata:
         helm-component: integrationTest
       image:
         - ${imageRepoBase}/integration-tests:${version}
         - ${imageRepoBase}/integration-tests:commit-${__git_commit}
+  - name: docker-ide-integration-tests
+    type: docker
+    srcs:
+      - entrypoint.sh
+    deps:
+      - :app
+    argdeps:
+      - imageRepoBase
+    config:
+      dockerfile: ide-integration.Dockerfile
+      metadata:
+        helm-component: integrationTest
+      image:
+        - ${imageRepoBase}/ide-integration-tests:${version}
+        - ${imageRepoBase}/ide-integration-tests:commit-${__git_commit}

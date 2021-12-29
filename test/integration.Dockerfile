@@ -13,7 +13,7 @@ RUN  apk upgrade --no-cache \
 # convenience scripting tools
 RUN apk add --no-cache bash moreutils
 
-COPY test--app/bin /tests
+COPY test--app/bin/integration /tests
 ENV PATH=$PATH:/tests
 COPY entrypoint.sh /entrypoint.sh
 ENTRYPOINT [ "/entrypoint.sh" ]
