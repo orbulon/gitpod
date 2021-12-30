@@ -79,9 +79,13 @@ export class Baseline1592203031938 implements MigrationInterface {
 
         // probe user
         {
-            const exists = (await queryRunner.query(`SELECT COUNT(1) AS cnt FROM d_b_user WHERE id = 'builtin-user-workspace-probe-0000000'`))[0].cnt == 1;
-            if (!exists) {
+            const existsUser = (await queryRunner.query(`SELECT COUNT(1) AS cnt FROM d_b_user WHERE id = 'builtin-user-workspace-probe-0000000'`))[0].cnt == 1;
+            if (!existsUser) {
                 await queryRunner.query(`INSERT IGNORE INTO d_b_user (id, creationDate, avatarUrl, name, fullName) VALUES ('${BUILTIN_WORKSPACE_PROBE_USER_ID}', '${new Date().toISOString()}', '', 'builtin-workspace-prober', '')`)
+            }
+            const existsIdentity = (await queryRunner.query(`SELECT COUNT(1) AS cnt FROM d_b_identity WHERE userId = 'builtin-user-workspace-probe-0000000'`))[0].cnt == 1;
+            if (!existsIdentity) {
+                await queryRunner.query(`INSERT IGNORE INTO d_b_identity (authProviderId, authId, authName, userId) VALUES ('Public-GitHub', '12345678', 'builtin-workspace-prober', 'builtin-user-workspace-probe-0000000')`)
             }
         }
     }
