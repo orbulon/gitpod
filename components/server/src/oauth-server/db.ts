@@ -45,9 +45,10 @@ const jetBrainsGateway: OAuthClient = {
   allowedGrants: ['authorization_code'],
   scopes: [
     { name: "function:getGitpodTokenScopes" },
+    { name: "function:getIDEOptions" },
+    { name: "function:getOwnerToken" },
     { name: "function:getWorkspace" },
     { name: "function:getWorkspaces" },
-    { name: "function:getOwnerToken" },
     { name: "function:listenForWorkspaceInstanceUpdates" },
     { name: "resource:default" }
   ],

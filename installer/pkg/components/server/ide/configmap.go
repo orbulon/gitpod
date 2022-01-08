@@ -24,9 +24,20 @@ func configmap(ctx *common.RenderContext) ([]runtime.Object, error) {
 	}
 	typeBrowser := "browser"
 	typeDesktop := "desktop"
+
+	intellij := "intellij"
+	goland := "goland"
+	pycharm := "pycharm"
+	phpstorm := "phpstorm"
 	idecfg := IDEConfig{
 		SupervisorImage: common.ImageName(ctx.Config.Repository, workspace.SupervisorImage, ctx.VersionManifest.Components.Workspace.Supervisor.Version),
 		IDEOptions: IDEOptions{
+			IDEClients: map[string]IDEClient{
+				"jetbrains-gateway": {
+					DefaultDesktopIDE: intellij,
+					DesktopIDEs:       []string{intellij, goland, pycharm, phpstorm},
+				},
+			},
 			Options: map[string]IDEOption{
 				"code": {
 					OrderKey: pointer.String("00"),
@@ -61,36 +72,32 @@ func configmap(ctx *common.RenderContext) ([]runtime.Object, error) {
 					Label:    pointer.String("Insiders"),
 					Image:    common.ImageName(ctx.Config.Repository, ide.CodeDesktopInsidersIDEImage, ctx.VersionManifest.Components.Workspace.DesktopIdeImages.CodeDesktopImageInsiders.Version),
 				},
-				"intellij": {
+				intellij: {
 					OrderKey: pointer.String("04"),
 					Title:    "IntelliJ IDEA",
 					Type:     typeDesktop,
 					Logo:     getIdeLogoPath("intellijIdeaLogo"),
-					Notes:    []string{"While in beta, when you open a workspace with IntelliJ IDEA you will need to use the password “gitpod”."},
 					Image:    common.ImageName(ctx.Config.Repository, ide.IntelliJDesktopIDEImage, ctx.VersionManifest.Components.Workspace.DesktopIdeImages.IntelliJImage.Version),
 				},
-				"goland": {
+				goland: {
 					OrderKey: pointer.String("05"),
 					Title:    "GoLand",
 					Type:     typeDesktop,
 					Logo:     getIdeLogoPath("golandLogo"),
-					Notes:    []string{"While in beta, when you open a workspace with GoLand you will need to use the password “gitpod”."},
 					Image:    common.ImageName(ctx.Config.Repository, ide.GoLandDesktopIdeImage, ctx.VersionManifest.Components.Workspace.DesktopIdeImages.GoLandImage.Version),
 				},
-				"pycharm": {
+				pycharm: {
 					OrderKey: pointer.String("06"),
 					Title:    "PyCharm",
 					Type:     typeDesktop,
 					Logo:     getIdeLogoPath("pycharmLogo"),
-					Notes:    []string{"While in beta, when you open a workspace with PyCharm you will need to use the password “gitpod”."},
 					Image:    common.ImageName(ctx.Config.Repository, ide.PyCharmDesktopIdeImage, ctx.VersionManifest.Components.Workspace.DesktopIdeImages.PyCharmImage.Version),
 				},
-				"phpstorm": {
+				phpstorm: {
 					OrderKey: pointer.String("07"),
 					Title:    "PhpStorm",
 					Type:     typeDesktop,
 					Logo:     getIdeLogoPath("phpstormLogo"),
-					Notes:    []string{"While in beta, when you open a workspace with PhpStorm you will need to use the password “gitpod”."},
 					Image:    common.ImageName(ctx.Config.Repository, ide.PhpStormDesktopIdeImage, ctx.VersionManifest.Components.Workspace.DesktopIdeImages.PhpStormImage.Version),
 				},
 			},

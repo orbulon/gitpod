@@ -19,6 +19,19 @@ import debounce = require('lodash.debounce')
 export interface IDEConfig {
     supervisorImage: string;
     ideOptions: IDEOptions;
+    clients?: { [id: string]: IDEClient };
+}
+
+export interface IDEClient {
+    /**
+     * The default desktop IDE when the user has not specified one.
+     */
+    defaultDesktopIDE?: string;
+
+    /**
+     * Desktop IDEs supported by the client.
+     */
+    desktopIDEs?: string[]
 }
 
 const scheme = {
@@ -56,13 +69,23 @@ const scheme = {
                 },
                 "defaultIde": { "type": "string" },
                 "defaultDesktopIde": { "type": "string" },
+                "clients": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                            "defaultDesktopIDE": { "type": "string" },
+                            "desktopIDEs": { "type": "array", "items": { "type": "string" } },
+                        }
+                    }
+                }
             },
             "required": [
                 "options",
                 "defaultIde",
                 "defaultDesktopIde",
             ],
-        },
+        }
     },
     "required": [
         "supervisorImage",
@@ -141,6 +164,21 @@ export class IDEConfigService {
                 }
                 if (newValue.ideOptions.options[newValue.ideOptions.defaultDesktopIde].type != "desktop") {
                     throw new Error(`invalid: Editor (desktop), '${newValue.ideOptions.defaultDesktopIde}' needs to be of type 'desktop' but is '${newValue.ideOptions.options[newValue.ideOptions.defaultIde].type}'.`);
+                }
+
+                if (newValue.ideOptions.clients) {
+                    for (const [clientId, client] of Object.entries(newValue.ideOptions.clients)) {
+                        if (client.defaultDesktopIDE && !(client.defaultDesktopIDE in newValue.ideOptions.options)) {
+                            throw new Error(`${clientId} client: there is no option entry for editor '${client.defaultDesktopIDE}'.`);
+                        }
+                        if (client.desktopIDEs) {
+                            for (const ide of client.desktopIDEs) {
+                                if (!(ide in newValue.ideOptions.options)) {
+                                    throw new Error(`${clientId} client: there is no option entry for editor '${ide}'.`);
+                                }
+                            }
+                        }
+                    }
                 }
 
                 value = newValue;

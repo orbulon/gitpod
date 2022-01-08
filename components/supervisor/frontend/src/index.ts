@@ -107,6 +107,7 @@ const toStop = new DisposableCollection();
     //#region current-frame
     let current: HTMLElement = loading.frame;
     let stopped = false;
+    let desktopRedirected = false;
     const nextFrame = () => {
         const instance = gitpodServiceClient.info.latestInstance;
         if (instance) {
@@ -120,7 +121,19 @@ const toStop = new DisposableCollection();
                             desktopIdeLink: ideStatus.desktop.link,
                             desktopIdeLabel: ideStatus.desktop.label || "Open Desktop IDE"
                         });
-                        // window.open(ideStatus.desktop.link);
+                        if (!desktopRedirected) {
+                            desktopRedirected = true;
+                            try {
+                                const desktopLink = new URL(ideStatus.desktop.link)
+                                // redirect only if points to desktop application
+                                // don't navigate browser to another page
+                                if (desktopLink.protocol != 'http:/' && desktopLink.protocol != 'https:/') {
+                                    window.location.href = ideStatus.desktop.link;
+                                }
+                            } catch (e) {
+                                console.error('invalid desktop link:', e)
+                            }
+                        }
                         return loading.frame;
                     }
                 }
