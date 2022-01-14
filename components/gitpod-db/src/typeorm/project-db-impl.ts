@@ -9,6 +9,7 @@ import { TypeORM } from "./typeorm";
 import { Repository } from "typeorm";
 import { ProjectDB } from "../project-db";
 import { DBProject } from "./entity/db-project";
+import { DBProjectInfo } from "./entity/db-project-info";
 import { PartialProject, Project } from "@gitpod/gitpod-protocol";
 
 @injectable()
@@ -19,8 +20,12 @@ export class ProjectDBImpl implements ProjectDB {
         return (await this.typeORM.getConnection()).manager;
     }
 
-    async getRepo(): Promise<Repository<DBProject>> {
+    protected async getRepo(): Promise<Repository<DBProject>> {
         return (await this.getEntityManager()).getRepository<DBProject>(DBProject);
+    }
+
+    protected async getProjectInfoRepo(): Promise<Repository<DBProjectInfo>> {
+        return (await this.getEntityManager()).getRepository<DBProjectInfo>(DBProjectInfo);
     }
 
     public async findProjectById(projectId: string): Promise<Project | undefined> {
@@ -92,5 +97,22 @@ export class ProjectDBImpl implements ProjectDB {
             project.markedDeleted = true;
             await repo.save(project);
         }
+        // Delete any additional cached infos about this project
+        const projectInfoRepo = await this.getProjectInfoRepo();
+        const info = await projectInfoRepo.findOne({ projectId, deleted: false });
+        if (info) {
+            await projectInfoRepo.update(projectId, { deleted: true });
+        }
+    }
+
+    public async findCachedProjectOverview(projectId: string): Promise<Project.Overview | undefined> {
+        const projectInfoRepo = await this.getProjectInfoRepo();
+        const info = await projectInfoRepo.findOne({ projectId });
+        return info?.overview;
+    }
+
+    public async storeCachedProjectOverview(projectId: string, overview: Project.Overview): Promise<void> {
+        const projectInfoRepo = await this.getProjectInfoRepo();
+        await projectInfoRepo.save({ projectId, overview });
     }
 }

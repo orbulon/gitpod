@@ -16,4 +16,6 @@ export interface ProjectDB {
     storeProject(project: Project): Promise<Project>;
     updateProject(partialProject: PartialProject): Promise<void>;
     markDeleted(projectId: string): Promise<void>;
+    findCachedProjectOverview(projectId: string): Promise<Project.Overview | undefined>;
+    storeCachedProjectOverview(projectId: string, overview: Project.Overview): Promise<void>;
 }
