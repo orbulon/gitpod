@@ -218,14 +218,19 @@ export class WebsocketConnectionManager implements ConnectionHandler {
 
         gitpodServer.initialize(client, user, resourceGuard, clientContext.clientMetadata, connectionCtx, clientHeaderFields);
         client.onDidCloseConnection(() => {
-            gitpodServer.dispose();
-            increaseApiConnectionClosedCounter();
-            this.events.emit(EVENT_CONNECTION_CLOSED, gitpodServer, expressReq);
+            try {
+                gitpodServer.dispose();
+                increaseApiConnectionClosedCounter();
+                this.events.emit(EVENT_CONNECTION_CLOSED, gitpodServer, expressReq);
 
-            clientContext.removeEndpoint(gitpodServer);
-            if (clientContext.hasNoEndpointsLeft()) {
-                this.contexts.delete(clientContext.clientId);
-                this.events.emit(EVENT_CLIENT_CONTEXT_CLOSED, clientContext);
+                clientContext.removeEndpoint(gitpodServer);
+                if (clientContext.hasNoEndpointsLeft()) {
+                    this.contexts.delete(clientContext.clientId);
+                    this.events.emit(EVENT_CLIENT_CONTEXT_CLOSED, clientContext);
+                }
+            } catch (err) {
+                // we want to be absolutely sure that we do not bubble up errors into ws.onClose here
+                log.error("onDidCloseConnection", err);
             }
         });
         clientContext.addEndpoint(gitpodServer);
@@ -297,7 +302,14 @@ class GitpodJsonRpcConnectionHandler<T extends object> extends JsonRpcConnection
         const span = opentracing.globalTracer().startSpan("ws-connection");
         const ctx = { span };
         ClientMetadata.set(ctx, clientMetadata);
-        connection.onClose(() => span.finish());
+        connection.onClose(() => {
+            try {
+                span.finish();
+            } catch (err) {
+                // we want to be absolutely sure that we do not bubble up errors into ws.onClose here
+                log.error("onClose", err);
+            }
+        });
 
         const factory = new GitpodJsonRpcProxyFactory<T>(
             this.createAccessGuard(request),
