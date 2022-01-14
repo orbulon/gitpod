@@ -117,6 +117,13 @@ export interface Team {
     deleted?: boolean;
 }
 
+export interface InstallationAdmin {
+    id: string;
+    sendTelemetry: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
 export type TeamMemberRole = "owner" | "member";
 
 export interface TeamMemberInfo {

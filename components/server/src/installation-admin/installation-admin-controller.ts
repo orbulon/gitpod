@@ -6,6 +6,7 @@
 
 import { injectable } from 'inversify';
 import * as express from 'express';
+import { Install, DBUser, WorkspaceDB, OneTimeSecretDB } from '@gitpod/gitpod-db/lib';
 
 @injectable()
 export class InstallationAdminController {
