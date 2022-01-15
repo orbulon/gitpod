@@ -2,7 +2,6 @@
   "$schema": "./config-schema.json",
   "manager": {
     "namespace": "default",
-    "workspaceSchedulerName": "default-scheduler",
     "container": {
       "workspace": {
         "image": "csweichel/noop:latest",

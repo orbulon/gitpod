@@ -39,7 +39,6 @@
     "Configuration": {
       "required": [
         "namespace",
-        "schedulerName",
         "container",
         "timeouts",
         "initProbe",
@@ -79,9 +78,6 @@
           "type": "string"
         },
         "reconnectionInterval": {
-          "type": "string"
-        },
-        "schedulerName": {
           "type": "string"
         },
         "theiaHostPath": {

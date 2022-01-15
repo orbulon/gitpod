@@ -62,8 +62,6 @@ type ServiceConfiguration struct {
 type Configuration struct {
 	// Namespace is the kubernetes namespace the workspace manager operates in
 	Namespace string `json:"namespace"`
-	// SchedulerName is the name of the workspace scheduler all pods are created with
-	SchedulerName string `json:"schedulerName"`
 	// SeccompProfile names the seccomp profile workspaces will use
 	SeccompProfile string `json:"seccompProfile"`
 	// Container configures all three workspace containers
@@ -107,8 +105,6 @@ type Configuration struct {
 	RegistryFacadeHost string `json:"registryFacadeHost"`
 	// Cluster host under which workspaces are served, e.g. ws-eu11.gitpod.io
 	WorkspaceClusterHost string `json:"workspaceClusterHost"`
-	// EnforceWorkspaceNodeAffinity makes ws-manager add node affinity to all workspace pods
-	EnforceWorkspaceNodeAffinity bool `json:"enforceWorkspaceNodeAffinity"`
 }
 
 // AllContainerConfiguration contains the configuration for all container in a workspace pod

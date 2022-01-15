@@ -226,7 +226,22 @@
             "serviceAccountName": "workspace",
             "automountServiceAccountToken": false,
             "hostname": "foobar",
-            "schedulerName": "workspace-scheduler",
+            "affinity": {
+                "nodeAffinity": {
+                    "requiredDuringSchedulingIgnoredDuringExecution": {
+                        "nodeSelectorTerms": [
+                            {
+                                "matchExpressions": [
+                                    {
+                                        "key": "gitpod.io/workload_workspace_headless",
+                                        "operator": "Exists"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            },
             "tolerations": [
                 {
                     "key": "node.kubernetes.io/disk-pressure",

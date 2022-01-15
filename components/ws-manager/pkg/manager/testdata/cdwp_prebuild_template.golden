@@ -228,6 +228,10 @@
                             {
                                 "matchExpressions": [
                                     {
+                                        "key": "gitpod.io/workload_workspace_headless",
+                                        "operator": "Exists"
+                                    },
+                                    {
                                         "key": "gitpod.io/workload_prebuild",
                                         "operator": "In",
                                         "values": [
@@ -240,7 +244,6 @@
                     }
                 }
             },
-            "schedulerName": "workspace-scheduler",
             "tolerations": [
                 {
                     "key": "node.kubernetes.io/disk-pressure",
