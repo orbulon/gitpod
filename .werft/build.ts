@@ -729,7 +729,7 @@ export async function deployToDevWithHelm(deploymentConfig: DeploymentConfig, wo
     "auths": {
         "eu.gcr.io": {
             "auth": "${auth}"
-        }
+        },
         "europe-docker.pkg.dev": {
             "auth": "${auth}"
         }
