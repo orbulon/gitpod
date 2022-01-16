@@ -551,7 +551,14 @@ export interface VSCodeConfig {
     extensions?: string[];
 }
 
+export interface SubRepository {
+    url: string;
+    checkoutLocation?: string;
+}
+
 export interface WorkspaceConfig {
+    mainRepository?: string;
+    subRepositories?: SubRepository[];
     image?: ImageConfig;
     ports?: PortConfig[];
     tasks?: TaskConfig[];
@@ -941,9 +948,20 @@ export namespace AdditionalContentContext {
     }
 }
 
-export interface CommitContext extends WorkspaceContext, Commit {
+export interface CommitContext extends WorkspaceContext, GitCheckoutInfo {
     /** @deprecated Moved to .repository.cloneUrl, left here for backwards-compatibility for old workspace contextes in the DB */
     cloneUrl?: string
+
+    /**
+     * The clone and checkout information for the sub-repositories in case of multi-repo projects.
+     */
+    subRepositoryCheckoutInfo?: GitCheckoutInfo[];
+}
+
+export interface GitCheckoutInfo extends Commit {
+    checkoutLocation?: string;
+    upstreamRemoteURI?: string;
+    localBranch?: string;
 }
 
 export namespace CommitContext {
